@@ -184,11 +184,14 @@ def create_demo(model_name: str):
     description = r"""
         <b>Inversion free version</b> for <a href='https://github.com/Xilluill/KV-Edit' target='_blank'><b>KV-Edit: Training-Free Image Editing for Precise Background Preservation</b></a>.<br>
     
-        🔔🔔[<b>Important</b>] Editing steps:<br>
-        1️⃣ Upload your image that needs to be edited (The resolution is expected be less than 1360*768, or the memory of GPU may be not enough.) <br>
+        💫💫 <b>Here is editing steps:</b> <br>
+        # 💫💫 <b>Here is editing steps:</b> (We highly recommend you run our code locally!😘 Only one inversion before multiple editing, very productive!) <br>
+        1️⃣ Upload your image that needs to be edited. <br>
         2️⃣ Use the brush tool to draw your mask area. <br>
         3️⃣ Fill in your source prompt and target prompt, then adjust the hyperparameters. <br>
         4️⃣ Click the "Edit" button to generate your edited image! <br>
+        
+        🔔🔔 [<b>Important</b>] We suggest trying "attn_mask" only when the result is too similar to the original content (e.g. removing objects).<br>
         """
     article = r"""
     If our work is helpful, please help to ⭐ the <a href='https://github.com/Xilluill/KV-Edit' target='_blank'>Github Repo</a>. Thanks! 
@@ -201,7 +204,6 @@ def create_demo(model_name: str):
     with gr.Blocks() as demo:
         gr.HTML(title)
         gr.Markdown(description)
-        gr.Markdown(article)
         # gr.Markdown(badge)
         
         with gr.Row():
@@ -232,6 +234,7 @@ def create_demo(model_name: str):
 
                 
                 output_image = gr.Image(label="Generated Image")
+                gr.Markdown(article)
         edit_btn.click(
             fn=editor.edit,
             inputs=[brush_canvas,

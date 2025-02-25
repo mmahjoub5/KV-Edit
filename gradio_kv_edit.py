@@ -266,12 +266,14 @@ def create_demo(model_name: str):
     description = r"""
         <b>Official 🤗 Gradio demo</b> for <a href='https://github.com/Xilluill/KV-Edit' target='_blank'><b>KV-Edit: Training-Free Image Editing for Precise Background Preservation</b></a>.<br>
     
-        🔔🔔[<b>Important</b>] Editing steps:<br>
+        💫💫 <b>Here is editing steps:</b> <br>
         1️⃣ Upload your image that needs to be edited. <br>
         2️⃣ Fill in your source prompt and click the "Inverse" button to perform image inversion. <br>
         3️⃣ Use the brush tool to draw your mask area. <br>
         4️⃣ Fill in your target prompt, then adjust the hyperparameters. <br>
         5️⃣ Click the "Edit" button to generate your edited image! <br>
+        
+        🔔🔔 [<b>Important</b>] We suggest trying "re_init" and "attn_mask" only when the result is too similar to the original content (e.g. removing objects).<br>
         """
     article = r"""
     If our work is helpful, please help to ⭐ the <a href='https://github.com/Xilluill/KV-Edit' target='_blank'>Github Repo</a>. Thanks! 
@@ -284,7 +286,6 @@ def create_demo(model_name: str):
     with gr.Blocks() as demo:
         gr.HTML(title)
         gr.Markdown(description)
-        gr.Markdown(article)
         
         with gr.Row():
             with gr.Column():
@@ -317,6 +318,7 @@ def create_demo(model_name: str):
 
                 
                 output_image = gr.Image(label="Generated Image")
+                gr.Markdown(article)
         inv_btn.click(
             fn=editor.inverse,
             inputs=[brush_canvas,

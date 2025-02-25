@@ -236,30 +236,29 @@ def create_demo(model_name: str):
     title = r"""
         <h1 align="center">🎨 KV-Edit: Training-Free Image Editing for Precise Background Preservation</h1>
         """
+    one = r"""
+    We recommend that you try our code locally, you can try several different edits after inverting the image only once!
+    """
         
     description = r"""
         <b>Official 🤗 Gradio demo</b> for <a href='https://github.com/Xilluill/KV-Edit' target='_blank'><b>KV-Edit: Training-Free Image Editing for Precise Background Preservation</b></a>.<br>
     
-        🔔🔔[<b>Important</b>] Editing steps:<br>
+        💫💫 <b>Here is editing steps:</b> <br>
         1️⃣ Upload your image that needs to be edited. <br>
         2️⃣ Fill in your source prompt and click the "Inverse" button to perform image inversion. <br>
         3️⃣ Use the brush tool to draw your mask area. <br>
         4️⃣ Fill in your target prompt, then adjust the hyperparameters. <br>
         5️⃣ Click the "Edit" button to generate your edited image! <br>
+        
+        🔔🔔 [<b>Important</b>] We suggest trying "re_init" and "attn_mask" only when the result is too similar to the original content (e.g. removing objects).<br>
         """
     article = r"""
     If our work is helpful, please help to ⭐ the <a href='https://github.com/Xilluill/KV-Edit' target='_blank'>Github Repo</a>. Thanks! 
-    """
-
-    badge = r"""
-    [![GitHub Stars](https://img.shields.io/github/stars/Xilluill/KV-Edit)](https://github.com/Xilluill/KV-Edit)
     """
     
     with gr.Blocks() as demo:
         gr.HTML(title)
         gr.Markdown(description)
-        gr.Markdown(article)
-        # gr.Markdown(badge)
         
         with gr.Row():
             with gr.Column():
@@ -279,7 +278,7 @@ def create_demo(model_name: str):
                 inv_btn = gr.Button("inverse")
                 edit_btn = gr.Button("edit")
                 
-                
+            
             with gr.Column():
                 with gr.Accordion("Advanced Options", open=True):
                     skip_step = gr.Slider(0, 30, 4, step=1, label="Number of skip steps")
@@ -289,9 +288,9 @@ def create_demo(model_name: str):
                     with gr.Row():
                         re_init = gr.Checkbox(label="re_init", value=False)
                         attn_mask = gr.Checkbox(label="attn_mask", value=False)
-
                 
                 output_image = gr.Image(label="Generated Image")
+                gr.Markdown(article)
         inv_btn.click(
             fn=editor.inverse,
             inputs=[brush_canvas,
