@@ -1,0 +1,78 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python 调试程序: 当前文件",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--name",
+                "flux-dev",
+                "--offload"
+            ],
+            "env": {
+                "FLUX_SCHNELL": "huggingface_models/scheduler",
+                "FLUX_DEV": "huggingface_models/flux1-dev.safetensors",
+                "AE": "huggingface_models/ae.safetensors"
+            },
+        },
+        {
+            "name": "Python 调试程序: 模块",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "dataset.pie_bench.pie_features",
+            "justMyCode": false,
+            "args": [
+            ],
+            "env": {
+                "FLUX_SCHNELL": "huggingface_models/scheduler",
+                "FLUX_DEV": "huggingface_models/flux1-dev.safetensors",
+                "AE": "huggingface_models/ae.safetensors"
+            },
+        },
+        {
+            "name": "debug注入",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--name",
+                "flux-dev",
+                "--gpus"
+            ],
+            "env": {
+                "FLUX_SCHNELL": "huggingface_models/scheduler",
+                "FLUX_DEV": "huggingface_models/flux1-dev.safetensors",
+                "AE": "huggingface_models/ae.safetensors",
+                "PYTORCH_CUDA_ALLOC_CONF": "max_split_size_mb:32",
+                "TMPDIR": "/mnt/disk_1/tianrui/tmp/"
+            },
+        },
+        {
+            "name": "torchrun debug train",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "torch.distributed.run",
+            "args": [
+                "--nnodes", "1",
+                "--nproc_per_node", "1",
+                "--node_rank", "0",
+                "--standalone", "run_kv_edit_pie.py",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "FLUX_SCHNELL": "huggingface_models/scheduler",
+                "FLUX_DEV": "huggingface_models/flux1-dev.safetensors",
+                "CUDA_VISIBLE_DEVICES": "0,1",
+                "PYTORCH_CUDA_ALLOC_CONF": "max_split_size_mb:32",
+                "CUDA_LAUNCH_BLOCKING": "1",
+            }
+        }
+    ]
+}
