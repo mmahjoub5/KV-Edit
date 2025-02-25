@@ -29,13 +29,13 @@ We propose <strong>KV-Edit</strong>, a training-free image editing approach that
 
 # 🔥 News
 - [2025.2.25] Code for image editing is released!
-- [2024.2.25] Paper released!
-- [2024.2.25] More results can be found in our [project page](https://xilluill.github.io/projectpages/KV-Edit/)!
+- [2025.2.25] Paper released!
+- [2025.2.25] More results can be found in our [project page](https://xilluill.github.io/projectpages/KV-Edit/)!
 
 # 👨‍💻 ToDo
 - ☑️ Release the gradio demo
 - ☑️ Release the huggingface space for image editing
-- ☐ Release the paper
+- ☑️ Release the paper
 
 
 # 📖 Pipeline
@@ -84,7 +84,8 @@ Here's a sample workflow for our demo:
 
 ### 💡Important Notes:
 - 🎨 When using the inversion-based version, you only need to perform the inversion once for each image. You can then repeat steps 3-5 for multiple editing attempts!
-- 🎨 When the "attn_mask" option is checked, you need to input the mask before performing the inversion
+- 🎨 "re_init" means using image blending with noise instead of result from inversion to generate new contents。
+- 🎨 When the "attn_mask" option is checked, you need to input the mask before performing the inversion.
 
 
 # 🖋️ Citation
