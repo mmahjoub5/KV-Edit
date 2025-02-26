@@ -26,7 +26,6 @@ We propose <strong>KV-Edit</strong>, a training-free image editing approach that
 </p>
 
 # 🔥 News
-- # 🔥 News
 - [2024.2.26] Our paper is featured in [huggingface Daily Papers](https://huggingface.co/papers/2502.17363)! Please upvote if you like it!🆙 
 - [2025.2.25] Code for image editing is released!
 - [2025.2.25] Paper released!
