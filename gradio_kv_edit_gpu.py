@@ -28,6 +28,41 @@ class SamplingOptions:
     re_init: bool = False
     attn_mask: bool = False
 
+def resize_image(image_array, max_width=1360, max_height=768):
+    # 将numpy数组转换为PIL图像
+    if image_array.shape[-1] == 4:
+        mode = 'RGBA'
+    else:
+        mode = 'RGB'
+    
+    pil_image = Image.fromarray(image_array, mode=mode)
+    
+    # 获取原始图像的宽度和高度
+    original_width, original_height = pil_image.size
+    
+    # 计算缩放比例
+    width_ratio = max_width / original_width
+    height_ratio = max_height / original_height
+    
+    # 选择较小的缩放比例以确保图像不超过最大宽度和高度
+    scale_ratio = min(width_ratio, height_ratio)
+    
+    # 如果图像已经小于或等于最大分辨率，则不进行缩放
+    if scale_ratio >= 1:
+        return image_array
+    
+    # 计算新的宽度和高度
+    new_width = int(original_width * scale_ratio)
+    new_height = int(original_height * scale_ratio)
+    
+    # 缩放图像
+    resized_image = pil_image.resize((new_width, new_height))
+    
+    # 将PIL图像转换回numpy数组
+    resized_array = np.array(resized_image)
+    
+    return resized_array
+
 class FluxEditor_kv_demo:
     def __init__(self, args):
         self.args = args
@@ -74,6 +109,7 @@ class FluxEditor_kv_demo:
         
         rgba_init_image = brush_canvas["background"]
         init_image = rgba_init_image[:,:,:3]
+        # init_image = resize_image(init_image)
         shape = init_image.shape        
         height = shape[0] if shape[0] % 16 == 0 else shape[0] - shape[0] % 16
         width = shape[1] if shape[1] % 16 == 0 else shape[1] - shape[1] % 16
@@ -100,6 +136,7 @@ class FluxEditor_kv_demo:
         torch.cuda.empty_cache()
         
         if opts.attn_mask:
+            # rgba_mask = resize_image(brush_canvas["layers"][0])[:height, :width, :]
             rgba_mask = brush_canvas["layers"][0][:height, :width, :]
             mask = rgba_mask[:,:,3]/255
             mask = mask.astype(int)
@@ -273,7 +310,7 @@ def create_demo(model_name: str):
                                                 interactive=True,
                                                 transforms=[],
                                                 container=True,
-                                                format='png',scale=1)
+                                                format='png')
                 
                 inv_btn = gr.Button("inverse")
                 edit_btn = gr.Button("edit")
