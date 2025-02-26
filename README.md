@@ -62,6 +62,10 @@ We provide three demo scripts for different hardware configurations. For users w
 ```
 python gradio_kv_edit.py
 ```
+For users with 2 GPUs(like 3090/4090) which can avoid offload models to accelerate, you can use:
+```
+python gradio_kv_edit_gpu.py --gpus
+```
 For users with limited GPU, we recommend you use:
 ```
 python gradio_kv_edit.py --offload
