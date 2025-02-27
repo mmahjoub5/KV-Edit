@@ -95,8 +95,11 @@ Here's a sample workflow for our demo:
 
 If you find our work helpful, please **star 🌟** this repo and **cite 📑** our paper. Thanks for your support!
 ```
-@article{,
-  title={}
+@article{zhu2025kv,
+  title={KV-Edit: Training-Free Image Editing for Precise Background Preservation},
+  author={Zhu, Tianrui and Zhang, Shiyi and Shao, Jiawei and Tang, Yansong},
+  journal={arXiv preprint arXiv:2502.17363},
+  year={2025}
 }
 ```
 
