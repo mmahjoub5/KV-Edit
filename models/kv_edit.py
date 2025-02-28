@@ -70,7 +70,7 @@ class only_Flux(torch.nn.Module):
 
         
         # attention_mask[background_token_indices.unsqueeze(1).expand(-1, seq_len), :] = False
-        attention_mask[background_token_indices.unsqueeze(1), mask_token_indices] = True  # 关注掩码
+        # attention_mask[background_token_indices.unsqueeze(1), mask_token_indices] = True  # 关注掩码
         attention_mask[background_token_indices.unsqueeze(1), text_indices] = True  # 关注文本
         attention_mask[background_token_indices.unsqueeze(1), background_token_indices] = True  # 关注背景区域
 

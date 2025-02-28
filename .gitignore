@@ -7,3 +7,4 @@ checkpoints
 huggingface_models
 openai
 __pycache__/
+.vscode/
