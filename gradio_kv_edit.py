@@ -27,6 +27,7 @@ class SamplingOptions:
     seed: int = 42
     re_init: bool = False
     attn_mask: bool = False
+    attn_scale: float = 1.0
 
 class FluxEditor_kv_demo:
     def __init__(self, args):
@@ -142,7 +143,7 @@ class FluxEditor_kv_demo:
              inversion_num_steps, denoise_num_steps, 
              skip_step, 
              inversion_guidance, denoise_guidance,seed,
-             re_init, attn_mask
+             re_init, attn_mask,attn_scale
              ):
         
         torch.cuda.empty_cache()
@@ -178,7 +179,8 @@ class FluxEditor_kv_demo:
             denoise_guidance=denoise_guidance,
             seed=seed,
             re_init=re_init,
-            attn_mask=attn_mask
+            attn_mask=attn_mask,
+            attn_scale=attn_scale
         )
         if self.offload:
             
@@ -273,7 +275,8 @@ def create_demo(model_name: str):
         4️⃣ Fill in your target prompt, then adjust the hyperparameters. <br>
         5️⃣ Click the "Edit" button to generate your edited image! <br>
         
-        🔔🔔 [<b>Important</b>] We suggest trying "re_init" and "attn_mask" only when the result is too similar to the original content (e.g. removing objects).<br>
+        🔔🔔 [<b>Important</b>] Less skip steps, "re_init" and "attn_mask"  will enhance the editing performance, making the results more aligned with your text but may lead to discontinuous images.  <br>
+        If you fail because of these three, we recommend trying to increase "attn_scale" to increase attention between mask and background.<br>
         """
     article = r"""
     If our work is helpful, please help to ⭐ the <a href='https://github.com/Xilluill/KV-Edit' target='_blank'>Github Repo</a>. Thanks! 
@@ -311,6 +314,7 @@ def create_demo(model_name: str):
                     skip_step = gr.Slider(0, 30, 4, step=1, label="Number of skip steps")
                     inversion_guidance = gr.Slider(1.0, 10.0, 1.5, step=0.1, label="inversion Guidance", interactive=not is_schnell)
                     denoise_guidance = gr.Slider(1.0, 10.0, 5.5, step=0.1, label="denoise Guidance", interactive=not is_schnell)
+                    attn_scale = gr.Slider(0.0, 5.0, 1, step=0.1, label="attn_scale")
                     seed = gr.Textbox('0', label="Seed (-1 for random)", visible=True)
                     with gr.Row():
                         re_init = gr.Checkbox(label="re_init", value=False)
@@ -327,7 +331,7 @@ def create_demo(model_name: str):
                     skip_step, 
                     inversion_guidance,
                     denoise_guidance,seed,
-                    re_init, attn_mask
+                    re_init, attn_mask,attn_scale
                     ],
             outputs=[output_image]
         )

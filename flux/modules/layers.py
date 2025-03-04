@@ -312,7 +312,7 @@ class DoubleStreamBlock_kv(DoubleStreamBlock):
             q = torch.cat((txt_q, img_q), dim=2)
             k = torch.cat((txt_k, source_img_k), dim=2)
             v = torch.cat((txt_v, source_img_v), dim=2)
-            attn = attention(q, k, v, pe=pe, pe_q = info['pe_mask'])
+            attn = attention(q, k, v, pe=pe, pe_q = info['pe_mask'],attention_mask=info['attention_scale'])
 
         
         txt_attn, img_attn = attn[:, : txt.shape[1]], attn[:, txt.shape[1] :]
@@ -375,7 +375,7 @@ class SingleStreamBlock_kv(SingleStreamBlock):
             
             k = torch.cat((txt_k, source_img_k), dim=2)
             v = torch.cat((txt_v, source_img_v), dim=2)
-            attn = attention(q, k, v, pe=pe, pe_q = info['pe_mask'])
+            attn = attention(q, k, v, pe=pe, pe_q = info['pe_mask'],attention_mask=info['attention_scale'])
 
         # compute activation in mlp stream, cat again and run second linear layer
         output = self.linear2(torch.cat((attn, self.mlp_act(mlp)), 2))

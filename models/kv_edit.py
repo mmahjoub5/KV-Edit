@@ -9,22 +9,6 @@ from flux.sampling import get_schedule, unpack,denoise_kv,denoise_kv_inf
 from flux.util import load_flow_model
 from flux.model import Flux_kv
 
-@dataclass
-class SamplingOptions:
-    source_prompt: str = ''
-    target_prompt: str = ''
-    # prompt: str
-    width: int = 1366
-    height: int = 768
-    inversion_num_steps: int = 0
-    denoise_num_steps: int = 0
-    skip_step: int = 0
-    inversion_guidance: float = 1.0
-    denoise_guidance: float = 1.0
-    seed: int = 42
-    re_init: bool = False
-    attn_mask: bool = False
-
 class only_Flux(torch.nn.Module): 
     def __init__(self, device,name='flux-dev'):
         self.device = device
@@ -33,48 +17,49 @@ class only_Flux(torch.nn.Module):
         self.model = load_flow_model(self.name, device=self.device,flux_cls=Flux_kv)
         
     def create_attention_mask(self,seq_len, mask_indices, text_len=512, device='cuda'):
-        """
-        创建自定义的注意力掩码。
-
-        Args:
-            seq_len (int): 序列长度。
-            mask_indices (List[int]): 图像令牌中掩码区域的索引。
-            text_len (int): 文本令牌的长度，默认 512。
-            device (str): 设备类型，如 'cuda' 或 'cpu'。
-
-        Returns:
-            torch.Tensor: 形状为 (seq_len, seq_len) 的注意力掩码。
-        """
-        # 初始化掩码为全 False
+        
         attention_mask = torch.zeros(seq_len, seq_len, dtype=torch.bool, device=device)
 
-        # 文本令牌索引
         text_indices = torch.arange(0, text_len, device=device)
 
-        # 掩码区域令牌索引
         mask_token_indices = torch.tensor([idx + text_len for idx in mask_indices], device=device)
 
-        # 背景区域令牌索引
         all_indices = torch.arange(text_len, seq_len, device=device)
         background_token_indices = torch.tensor([idx for idx in all_indices if idx not in mask_token_indices])
 
-        # 设置文本查询可以关注所有键
+        # text setting
         attention_mask[text_indices.unsqueeze(1).expand(-1, seq_len)] = True
-        attention_mask[text_indices.unsqueeze(1), text_indices] = True# 关注文本
-        attention_mask[text_indices.unsqueeze(1), background_token_indices] = True # 关注背景
+        attention_mask[text_indices.unsqueeze(1), text_indices] = True
+        attention_mask[text_indices.unsqueeze(1), background_token_indices] = True 
 
         
-        # attention_mask[mask_token_indices.unsqueeze(1), background_token_indices] = True  # 关注背景
-        attention_mask[mask_token_indices.unsqueeze(1), text_indices] = True  # 关注文本
-        attention_mask[mask_token_indices.unsqueeze(1), mask_token_indices] = True  # 关注掩码区域
+        # mask setting
+        # attention_mask[mask_token_indices.unsqueeze(1), background_token_indices] = True 
+        attention_mask[mask_token_indices.unsqueeze(1), text_indices] = True  
+        attention_mask[mask_token_indices.unsqueeze(1), mask_token_indices] = True 
 
-        
-        # attention_mask[background_token_indices.unsqueeze(1).expand(-1, seq_len), :] = False
-        # attention_mask[background_token_indices.unsqueeze(1), mask_token_indices] = True  # 关注掩码
-        attention_mask[background_token_indices.unsqueeze(1), text_indices] = True  # 关注文本
-        attention_mask[background_token_indices.unsqueeze(1), background_token_indices] = True  # 关注背景区域
+        # background setting
+        # attention_mask[background_token_indices.unsqueeze(1), mask_token_indices] = True  
+        attention_mask[background_token_indices.unsqueeze(1), text_indices] = True 
+        attention_mask[background_token_indices.unsqueeze(1), background_token_indices] = True  
 
         return attention_mask.unsqueeze(0)
+
+    def create_attention_scale(self,seq_len, mask_indices, text_len=512, device='cuda',scale = 0):
+
+        attention_scale = torch.zeros(1, seq_len, dtype=torch.bfloat16, device=device) # 相加时广播
+
+
+        text_indices = torch.arange(0, text_len, device=device)
+        
+        mask_token_indices = torch.tensor([idx + text_len for idx in mask_indices], device=device)
+
+        all_indices = torch.arange(text_len, seq_len, device=device)
+        background_token_indices = torch.tensor([idx for idx in all_indices if idx not in mask_token_indices])
+        
+        attention_scale[0, background_token_indices] = scale #
+        
+        return attention_scale.unsqueeze(0)
      
 class Flux_kv_edit_inf(only_Flux):
     def __init__(self, device,name):
@@ -102,6 +87,12 @@ class Flux_kv_edit_inf(only_Flux):
         else:
             attention_mask = None   
         info['attention_mask'] = attention_mask
+        
+        if opts.attn_scale != 0 and (~bool_mask).any():
+            attention_scale = self.create_attention_scale(L+512, mask_indices, device=mask.device,scale = opts.attn_scale)
+        else:
+            attention_scale = None
+        info['attention_scale'] = attention_scale
         
         denoise_timesteps = get_schedule(opts.denoise_num_steps, inp["img"].shape[1], shift=(self.name != "flux-schnell"))
         denoise_timesteps = denoise_timesteps[opts.skip_step:]
@@ -170,7 +161,7 @@ class Flux_kv_edit(only_Flux):
         
         h = opts.height // 8
         w = opts.width // 8
-        
+        L = h * w // 4 
         mask = F.interpolate(mask, size=(h,w), mode='bilinear', align_corners=False)
         mask[mask > 0] = 1
         
@@ -192,6 +183,12 @@ class Flux_kv_edit(only_Flux):
             inp_target["img"] = zt_noise[:, mask_indices,...]
         else:
             inp_target["img"] = zt[:, mask_indices,...]
+            
+        if opts.attn_scale != 0 and (~bool_mask).any():
+            attention_scale = self.create_attention_scale(L+512, mask_indices, device=mask.device,scale = opts.attn_scale)
+        else:
+            attention_scale = None
+        info['attention_scale'] = attention_scale
 
         info['inverse'] = False
         x, _ = denoise_kv(self.model, **inp_target, timesteps=denoise_timesteps, guidance=opts.denoise_guidance, inverse=False, info=info)

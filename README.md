@@ -26,7 +26,8 @@ We propose <strong>KV-Edit</strong>, a training-free image editing approach that
 </p>
 
 # 🔥 News
-- [2024.2.26] Our paper is featured in [huggingface Papers](https://huggingface.co/papers/2502.17363)!
+- [2025.3.4] We update "attention scale" feature to reduce the discontinuity with the background.
+- [2025.2.26] Our paper is featured in [huggingface Papers](https://huggingface.co/papers/2502.17363)!
 - [2025.2.25] Code for image editing is released!
 - [2025.2.25] Paper released!
 - [2025.2.25] More results can be found in our [project page](https://xilluill.github.io/projectpages/KV-Edit/)!
