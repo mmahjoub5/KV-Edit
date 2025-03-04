@@ -90,6 +90,7 @@ Here's a sample workflow for our demo:
 - 🎨 When using the inversion-based version, you only need to perform the inversion once for each image. You can then repeat steps 3-5 for multiple editing attempts!
 - 🎨 "re_init" means using image blending with noise instead of result from inversion to generate new contents.
 - 🎨 When the "attn_mask" option is checked, you need to input the mask before performing the inversion.
+- 🎨 When the mask is large, and using less skip steps or "re_init", the content of the mask area may not be continuous with background, you can try to increase "attn_scale".
 
 
 # 🖋️ Citation
