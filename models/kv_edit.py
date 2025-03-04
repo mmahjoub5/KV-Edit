@@ -89,7 +89,7 @@ class Flux_kv_edit_inf(only_Flux):
         info['attention_mask'] = attention_mask
         
         if opts.attn_scale != 0 and (~bool_mask).any():
-            attention_scale = self.create_attention_scale(L+512, mask_indices, device=mask.device,scale = opts.attn_scale)
+            attention_scale = self.create_attention_scale(L+512, info['mask_indices'], device=mask.device,scale = opts.attn_scale)
         else:
             attention_scale = None
         info['attention_scale'] = attention_scale
