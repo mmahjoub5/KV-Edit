@@ -26,6 +26,7 @@ We propose <strong>KV-Edit</strong>, a training-free image editing approach that
 </p>
 
 # 🔥 News
+- [2025.3.12] Thanks to @[smthemex](https://github.com/smthemex) for integrating KV-Edit into [ComfyUI](https://github.com/smthemex/ComfyUI_KV_Edit)!
 - [2025.3.4] We update "attention scale" feature to reduce the discontinuity with the background.
 - [2025.2.26] Our paper is featured in [huggingface Papers](https://huggingface.co/papers/2502.17363)!
 - [2025.2.25] Code for image editing is released!
