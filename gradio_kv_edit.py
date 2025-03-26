@@ -331,7 +331,7 @@ def create_demo(model_name: str):
                     skip_step, 
                     inversion_guidance,
                     denoise_guidance,seed,
-                    re_init, attn_mask,attn_scale
+                    re_init, attn_mask
                     ],
             outputs=[output_image]
         )
@@ -343,7 +343,7 @@ def create_demo(model_name: str):
                     skip_step, 
                     inversion_guidance,
                     denoise_guidance,seed,
-                    re_init, attn_mask
+                    re_init, attn_mask,attn_scale
                     ],
             outputs=[output_image]
         )
