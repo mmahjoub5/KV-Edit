@@ -402,6 +402,7 @@ if __name__ == "__main__":
         source_prompt="a photo of a cat",
         target_prompt="a photo of a tiger",
         inversion_num_steps=1,
+        denoise_num_steps=1,
         
     )
     

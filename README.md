@@ -77,6 +77,10 @@ For users with limited CPU memory such as PC, we recommend you use:
 ```
 python gradio_kv_edit_inf.py --offload
 ```
+AMIN'S CODE to run without GRADIO 
+```
+python main.py
+```
 Here's a sample workflow for our demo:
 
 1️⃣ Upload your image that needs to be edited. <br>
